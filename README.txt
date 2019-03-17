@@ -1,1 +1,2 @@
-just for testing miner
+just for testing
+
