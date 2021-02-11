@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>main.html</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #171717; }
+.cpp1-assembler { background-color: #171717; color: #009CFF; }
+.cpp1-character { background-color: #171717; color: #C732FB; }
+.cpp1-comment { background-color: #171717; color: #577A57; }
+.cpp1-float { background-color: #171717; color: #EEDEC9; }
+.cpp1-hexadecimal { background-color: #171717; color: #EEDEC9; }
+.cpp1-identifier { background-color: #171717; color: #FFFFFF; }
+.cpp1-illegalchar { background-color: #056109; color: #FFFFFF; }
+.cpp1-number { background-color: #171717; color: #EEDEC9; }
+.cpp1-octal { background-color: #171717; color: #EEDEC9; }
+.cpp1-preprocessor { background-color: #171717; color: #009CFF; }
+.cpp1-reservedword { background-color: #171717; color: #AFFF80; }
+.cpp1-space { background-color: #171717; color: #FFFFFF; }
+.cpp1-string { background-color: #171717; color: #1667CA; }
+.cpp1-symbol { background-color: #171717; color: #FFFFFF; }
+-->
+</style>
+</head>
+<body>
+<pre>
+<code><span style="font: 13pt Consolas;"><span class="cpp1-preprocessor">#include &lt;SDL2/SDL.h&gt;
+#include &lt;SDL2/SDL_image.h&gt;
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+#include &lt;ctime&gt;
+</span><span class="cpp1-comment">//#include &lt;locale.h&gt;
+//==============|DEBUG|============
+</span><span class="cpp1-preprocessor">#include &lt;time.h&gt;
+</span><span class="cpp1-comment">//==============|DEBUG|============
+
+</span><span class="cpp1-reservedword">const</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> SCREEN_WIDTH = </span><span class="cpp1-number">800</span><span class="cpp1-symbol">;
+</span><span class="cpp1-reservedword">const</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> SCREEN_HEIGHT = </span><span class="cpp1-number">480</span><span class="cpp1-symbol">;
+</span><span class="cpp1-reservedword">const</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> SIZEFONT = </span><span class="cpp1-number">64</span><span class="cpp1-symbol">;
+
+</span><span class="cpp1-reservedword">const</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> menu_align_x=</span><span class="cpp1-number">50</span><span class="cpp1-symbol">;
+</span><span class="cpp1-reservedword">const</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> menu_lenght_x=</span><span class="cpp1-number">350</span><span class="cpp1-symbol">;
+
+SDL_Window *win = NULL;
+SDL_Surface *screen = NULL;
+
+</span><span class="cpp1-reservedword">using</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">namespace</span><span class="cpp1-space"> std;
+
+string imfileobj=</span><span class="cpp1-string">&quot;N/A&quot;</span><span class="cpp1-symbol">;	
+
+</span><span class="cpp1-reservedword">class</span><span class="cpp1-space"> letter{
+	</span><span class="cpp1-reservedword">public</span><span class="cpp1-symbol">:
+		</span><span class="cpp1-comment">//char ch;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * ch = </span><span class="cpp1-reservedword">new</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">char</span><span class="cpp1-symbol">[</span><span class="cpp1-number">35</span><span class="cpp1-symbol">];
+		</span><span class="cpp1-reservedword">unsigned</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> udr;
+};
+
+</span><span class="cpp1-reservedword">class</span><span class="cpp1-space"> math_problem{
+	</span><span class="cpp1-reservedword">public</span><span class="cpp1-symbol">:
+		</span><span class="cpp1-comment">//char ch;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * problem = </span><span class="cpp1-reservedword">new</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">char</span><span class="cpp1-symbol">[</span><span class="cpp1-number">35</span><span class="cpp1-symbol">];
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * solves = </span><span class="cpp1-reservedword">new</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">char</span><span class="cpp1-symbol">[</span><span class="cpp1-number">35</span><span class="cpp1-symbol">];
+		</span><span class="cpp1-reservedword">unsigned</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> answ;
+};
+
+</span><span class="cpp1-reservedword">class</span><span class="cpp1-space"> config{
+	</span><span class="cpp1-reservedword">public</span><span class="cpp1-symbol">:
+		
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> bg_r = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> bg_g = </span><span class="cpp1-number">191</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> bg_b = </span><span class="cpp1-number">255</span><span class="cpp1-symbol">;
+		
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * font_name=</span><span class="cpp1-string">&quot;line_letter_aligned.png&quot;</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * udar_name=</span><span class="cpp1-string">&quot;udar.png&quot;</span><span class="cpp1-symbol">;
+		
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * dialogp_name=</span><span class="cpp1-string">&quot;positivedialog.png&quot;</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * dialogs_name=</span><span class="cpp1-string">&quot;saddialog.png&quot;</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * smilep_name=</span><span class="cpp1-string">&quot;smilep.png&quot;</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * smiles_name=</span><span class="cpp1-string">&quot;smiles.png&quot;</span><span class="cpp1-symbol">;
+
+};
+</span><span class="cpp1-comment">/*
+class config_scene{
+	public:		
+};
+*/
+
+</span><span class="cpp1-reservedword">enum</span><span class="cpp1-space"> buttonstatus{
+	PRESSED,
+	MOUSEENTER,
+	MOUSEOUT,
+};
+
+</span><span class="cpp1-reservedword">enum</span><span class="cpp1-space"> game_scene_state{
+	MAIN_MENU,
+	GAME_WORDGUESSER,
+	GAME_MATH,
+	MAIN_ABOUT,
+	GAME_FASTMATH
+};
+
+</span><span class="cpp1-reservedword">enum</span><span class="cpp1-space"> text_type{
+	TYPE_WORD,
+	TYPE_NUMBERS
+};
+
+</span><span class="cpp1-reservedword">class</span><span class="cpp1-space"> button{
+	
+	</span><span class="cpp1-reservedword">private</span><span class="cpp1-symbol">:
+		SDL_Surface* button_image = NULL;
+		SDL_Rect dest;
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> x;
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> y;
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> w;
+		</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> h;
+		
+	</span><span class="cpp1-reservedword">public</span><span class="cpp1-symbol">:
+		buttonstatus state;
+		button(</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> tx,</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> ty,</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> tw,</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> th,</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * image){
+			x = tx;
+			y = ty;
+			w = tw;
+			h = th;
+			LoadImage(image);
+		}
+		
+		</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> check(SDL_Event* event){
+		    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> mx, my;
+		    SDL_GetMouseState(&amp;mx, &amp;my);
+		    </span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(event-&gt;type){
+		        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> SDL_MOUSEBUTTONDOWN: </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(mx &gt;= x &amp;&amp; mx &lt;= x + w &amp;&amp; my &gt;= y &amp;&amp; my &lt;= y + h){state = PRESSED;}</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> SDL_MOUSEMOTION:
+		            </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(mx &gt;= x &amp;&amp; mx &lt;= x + w &amp;&amp; my &gt;= y &amp;&amp; my &lt;= y + h){
+		                state = MOUSEENTER;
+		            }
+		            </span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">		                state = MOUSEOUT;
+		            </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		        </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> SDL_MOUSEBUTTONUP: </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(mx &gt;= x &amp;&amp; mx &lt;= x + w &amp;&amp; my &gt;= y &amp;&amp; my &lt;= y + h){ state = MOUSEENTER;}</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		    }
+		}
+			
+		</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> Draw() {
+			dest.x = x;
+		  	dest.y = y;
+			dest.w = w;
+		  	dest.h = h;
+		    
+		  	SDL_BlitScaled(button_image,
+		                   NULL,
+		                   screen,
+		                   &amp;dest);
+		}	
+	
+		</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> LoadImage(</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * image_name){
+			
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(image_name!=</span><span class="cpp1-string">&quot;invisible&quot;</span><span class="cpp1-symbol">){
+			SDL_Surface* tsurface;
+			
+			tsurface = IMG_Load(image_name);
+			</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(tsurface == NULL){
+				printf(</span><span class="cpp1-string">&quot;Can't load image %s\n&quot;</span><span class="cpp1-symbol">,image_name);
+				button_image = NULL;
+			}
+			</span><span class="cpp1-comment">//printf(&quot;Button loaded %s\n&quot;,image_name);
+</span><span class="cpp1-space">			button_image = tsurface;
+			}</span><span class="cpp1-reservedword">else</span><span class="cpp1-symbol">{
+			button_image = NULL;
+			}
+		}
+};
+
+
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> VInit() {
+	
+    </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (SDL_Init(SDL_INIT_VIDEO) != </span><span class="cpp1-number">0</span><span class="cpp1-symbol">){SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                         			</span><span class="cpp1-string">&quot;Missing file&quot;</span><span class="cpp1-symbol">,
+                         			</span><span class="cpp1-string">&quot;INIT ERROR&quot;</span><span class="cpp1-symbol">,
+                         			NULL);</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">1</span><span class="cpp1-symbol">;}
+
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(SDL_Init(SDL_INIT_AUDIO)!=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">){SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                         			</span><span class="cpp1-string">&quot;Missing file&quot;</span><span class="cpp1-symbol">,
+                         			</span><span class="cpp1-string">&quot;AUDIO ERROR&quot;</span><span class="cpp1-symbol">,
+                         			NULL);</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">1</span><span class="cpp1-symbol">;}
+
+    win = SDL_CreateWindow(</span><span class="cpp1-string">&quot;Project 1&quot;</span><span class="cpp1-symbol">, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (win == NULL) {</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">123</span><span class="cpp1-symbol">;}
+
+    screen = SDL_GetWindowSurface(win);
+
+    </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+}
+
+SDL_Surface* LoadFont(</span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * BitmapFont){
+  SDL_Surface* temp;
+  
+  temp = IMG_Load(BitmapFont);
+  </span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(temp == NULL){
+    printf(</span><span class="cpp1-string">&quot;Can't load image %s\n&quot;</span><span class="cpp1-symbol">,BitmapFont);
+  </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> NULL;
+  }
+  
+  </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> temp;
+}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> DrawText(text_type tt,SDL_Surface* sFont, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> x, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> y, </span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> * str,</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> size) {
+  SDL_Rect src, dest;
+  
+  </span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> (tt){
+    
+  </span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> TYPE_WORD:  
+  </span><span class="cpp1-reservedword">for</span><span class="cpp1-space"> (</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">; i &lt; strlen(str); i++) {
+     </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (str[i] &gt;= </span><span class="cpp1-character">'&Agrave;'</span><span class="cpp1-space"> &amp;&amp; str[i] &lt;= </span><span class="cpp1-character">'&szlig;'</span><span class="cpp1-symbol">) {
+	src.x = (str[i] - </span><span class="cpp1-character">'&Agrave;'</span><span class="cpp1-symbol">) * </span><span class="cpp1-number">10</span><span class="cpp1-symbol">;
+	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+  	</span><span class="cpp1-comment">//=======================
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//src.w = 32;
+</span><span class="cpp1-space">  	</span><span class="cpp1-comment">//src.h = 32;
+</span><span class="cpp1-space">    </span><span class="cpp1-comment">//=======================
+</span><span class="cpp1-space">    src.w = </span><span class="cpp1-number">10</span><span class="cpp1-symbol">;
+  	src.h = </span><span class="cpp1-number">12</span><span class="cpp1-symbol">;
+
+	dest.x = x + (i *size);
+  	dest.y = y;
+	dest.w = size;
+  	dest.h = size;
+
+  	SDL_BlitScaled(sFont,
+                   &amp;src,
+                   screen,
+                   &amp;dest);
+  	
+    }}
+	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	
+</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> TYPE_NUMBERS:
+	</span><span class="cpp1-reservedword">for</span><span class="cpp1-space"> (</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> i = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">; i &lt; strlen(str); i++) {
+     </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (str[i] &gt;= </span><span class="cpp1-character">'1'</span><span class="cpp1-space"> &amp;&amp; str[i] &lt;= </span><span class="cpp1-character">'9'</span><span class="cpp1-symbol">) {
+	src.x = ((str[i] - </span><span class="cpp1-character">'1'</span><span class="cpp1-symbol">)+</span><span class="cpp1-number">1</span><span class="cpp1-symbol">) * </span><span class="cpp1-number">10</span><span class="cpp1-symbol">;
+	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+  	
+	src.w = </span><span class="cpp1-number">10</span><span class="cpp1-symbol">;
+  	src.h = </span><span class="cpp1-number">12</span><span class="cpp1-symbol">;
+
+	dest.x = x + (i *size);
+  	dest.y = y;
+	dest.w = size;
+  	dest.h = size;
+
+  	SDL_BlitScaled(sFont,
+                   &amp;src,
+                   screen,
+                   &amp;dest);
+  	
+    }
+	</span><span class="cpp1-reservedword">else
+</span><span class="cpp1-space">	{
+    	</span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(str[i])
+    	{
+    	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-character">'='</span><span class="cpp1-symbol">:
+		src.x = </span><span class="cpp1-number">100</span><span class="cpp1-symbol">;
+    	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-character">'*'</span><span class="cpp1-symbol">:
+		src.x = </span><span class="cpp1-number">110</span><span class="cpp1-symbol">;
+    	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-character">'+'</span><span class="cpp1-symbol">:
+		src.x = </span><span class="cpp1-number">120</span><span class="cpp1-symbol">;
+    	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-character">'-'</span><span class="cpp1-symbol">:
+		src.x = </span><span class="cpp1-number">130</span><span class="cpp1-symbol">;
+    	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-character">'?'</span><span class="cpp1-symbol">:
+		src.x = </span><span class="cpp1-number">140</span><span class="cpp1-symbol">;
+    	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-character">' '</span><span class="cpp1-symbol">:
+		src.x = </span><span class="cpp1-number">150</span><span class="cpp1-symbol">;
+    	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+    	
+		}
+		
+		src.w = </span><span class="cpp1-number">10</span><span class="cpp1-symbol">;
+	  	src.h = </span><span class="cpp1-number">12</span><span class="cpp1-symbol">;
+		
+		
+		dest.x = x + (i *size);
+	  	dest.y = y;
+		dest.w = size;
+	  	dest.h = size;
+	
+	  	SDL_BlitScaled(sFont,
+	                   &amp;src,
+	                   screen,
+	                   &amp;dest);
+	}
+	}
+	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;	
+	}</span><span class="cpp1-comment">//Switch(tt)
+</span><span class="cpp1-symbol">}
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> DrawUdar(SDL_Surface* sUdr, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> x, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> y) {
+  	SDL_Rect src, dest;
+  	src.x = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+  	src.w = </span><span class="cpp1-number">32</span><span class="cpp1-symbol">;
+  	src.h = </span><span class="cpp1-number">32</span><span class="cpp1-symbol">;
+      
+	dest.x = x;
+  	dest.y = y;
+	dest.w = SIZEFONT;
+  	dest.h = SIZEFONT;
+  	
+  	SDL_BlitScaled(sUdr,
+                   &amp;src,
+                   screen,
+                   &amp;dest);
+  	</span><span class="cpp1-comment">//SDL_UpdateWindowSurface(win);
+</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-reservedword">void</span><span class="cpp1-space"> DrawDialog(SDL_Surface* surface, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> x, </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> y) {
+  	SDL_Rect src, dest;
+  	src.x = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+	src.y = </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+  	src.w = </span><span class="cpp1-number">202</span><span class="cpp1-symbol">;
+  	src.h = </span><span class="cpp1-number">153</span><span class="cpp1-symbol">;
+      
+	dest.x = x;
+  	dest.y = y;
+	dest.w = </span><span class="cpp1-number">202</span><span class="cpp1-symbol">;
+  	dest.h = </span><span class="cpp1-number">153</span><span class="cpp1-symbol">;
+    
+  	SDL_BlitScaled(surface,
+                   &amp;src,
+                   screen,
+                   &amp;dest);
+}
+
+</span><span class="cpp1-comment">//===============================================
+/*
+void Draw_normal(SDL_Surface* surface, int x, int y, int cw, int ch, int w, int h) {
+  	SDL_Rect src, dest;
+  	src.x = 0;
+	src.y = 0;
+  	src.w = cw;
+  	src.h = ch;
+      
+	dest.x = x;
+  	dest.y = y;
+	dest.w = w;
+  	dest.h = h;
+    
+  	SDL_BlitScaled(surface,
+                   &amp;src,
+                   screen,
+                   &amp;dest);
+}
+*/
+//===============================================
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> main (</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> argc, </span><span class="cpp1-reservedword">char</span><span class="cpp1-space"> ** args) {
+	setlocale(LC_ALL, </span><span class="cpp1-string">&quot;&quot;</span><span class="cpp1-symbol">);
+	cout&lt;&lt;</span><span class="cpp1-string">&quot;&ETH;&oacute;&ntilde;&ntilde;&ecirc;&egrave;&eacute; &ograve;&aring;&ecirc;&ntilde;&ograve;&quot;</span><span class="cpp1-symbol">&lt;&lt;endl;
+	
+    </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (VInit()) {</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">1</span><span class="cpp1-symbol">;}
+    
+    srand(time(</span><span class="cpp1-number">0</span><span class="cpp1-symbol">));
+    
+    </span><span class="cpp1-reservedword">bool</span><span class="cpp1-space"> ready=</span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">;
+    
+    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> n=</span><span class="cpp1-comment">/*3000*/</span><span class="cpp1-number">30</span><span class="cpp1-symbol">;
+    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> m=</span><span class="cpp1-number">10</span><span class="cpp1-symbol">;
+    </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> count=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+    
+    </span><span class="cpp1-comment">//=====
+</span><span class="cpp1-space">	letter * WORD = </span><span class="cpp1-reservedword">new</span><span class="cpp1-space"> letter[n];
+	letter EDITWORD;
+	</span><span class="cpp1-comment">//=====
+</span><span class="cpp1-space">	math_problem * EQUATION = </span><span class="cpp1-reservedword">new</span><span class="cpp1-space"> math_problem[n];
+	math_problem EDIT_MATHP;
+	</span><span class="cpp1-comment">//=====
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-comment">//==================================================
+</span><span class="cpp1-space">	WORD[</span><span class="cpp1-number">0</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Ntilde;&Icirc;&Aacute;&Agrave;&times;&Ecirc;&Agrave;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">0</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">4</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">1</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Icirc;&Aacute;&Euml;&Agrave;&Ecirc;&Icirc;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">1</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">2</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Auml;&Egrave;&Acirc;&Agrave;&Iacute;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">2</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">4</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">3</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Ecirc;&Agrave;&Ograve;&Agrave;&Euml;&Icirc;&Atilde;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">3</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">6</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">4</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Auml;&Aring;&ETH;&Aring;&Acirc;&Icirc;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">4</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">2</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">5</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Iuml;&ETH;&Agrave;&Ccedil;&Auml;&Iacute;&Egrave;&Ecirc;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">5</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">3</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">6</span><span class="cpp1-symbol">].ch=</span><span class="cpp1-string">&quot;&Iuml;&Aring;&Iacute;&Agrave;&Euml;&quot;</span><span class="cpp1-symbol">;
+	WORD[</span><span class="cpp1-number">6</span><span class="cpp1-symbol">].udr=</span><span class="cpp1-number">4</span><span class="cpp1-symbol">;
+	
+	EQUATION[</span><span class="cpp1-number">0</span><span class="cpp1-symbol">].problem=</span><span class="cpp1-string">&quot;123+321=?&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">0</span><span class="cpp1-symbol">].solves=</span><span class="cpp1-string">&quot;444 445 500&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">0</span><span class="cpp1-symbol">].answ=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;	
+	
+	EQUATION[</span><span class="cpp1-number">1</span><span class="cpp1-symbol">].problem=</span><span class="cpp1-string">&quot;256*3=?&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">1</span><span class="cpp1-symbol">].solves=</span><span class="cpp1-string">&quot;786 768 800&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">1</span><span class="cpp1-symbol">].answ=</span><span class="cpp1-number">2</span><span class="cpp1-symbol">;	
+	
+	EQUATION[</span><span class="cpp1-number">2</span><span class="cpp1-symbol">].problem=</span><span class="cpp1-string">&quot;999-444=?&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">2</span><span class="cpp1-symbol">].solves=</span><span class="cpp1-string">&quot;444 222 555&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">2</span><span class="cpp1-symbol">].answ=</span><span class="cpp1-number">3</span><span class="cpp1-symbol">;	
+	
+	EQUATION[</span><span class="cpp1-number">3</span><span class="cpp1-symbol">].problem=</span><span class="cpp1-string">&quot;564+156=?&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">3</span><span class="cpp1-symbol">].solves=</span><span class="cpp1-string">&quot;720 700 825&quot;</span><span class="cpp1-symbol">;
+	EQUATION[</span><span class="cpp1-number">3</span><span class="cpp1-symbol">].answ=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;	
+	
+	SDL_Surface* sFont;
+	sFont = LoadFont(</span><span class="cpp1-string">&quot;line_letter_aligned.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface* sUdr;
+	sUdr = LoadFont(</span><span class="cpp1-string">&quot;udar.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface* sNumFont;
+	sNumFont = LoadFont(</span><span class="cpp1-string">&quot;line_num_aligned.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface* sCursor;
+	sCursor = LoadFont(</span><span class="cpp1-string">&quot;cursor.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface * dialogp;
+	dialogp = LoadFont(</span><span class="cpp1-string">&quot;positivedialog.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface * dialogs;
+	dialogs = LoadFont(</span><span class="cpp1-string">&quot;saddialog.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface * smilep;
+	smilep = LoadFont(</span><span class="cpp1-string">&quot;smilep.png&quot;</span><span class="cpp1-symbol">);
+	
+	SDL_Surface * smiles;
+	smiles = LoadFont(</span><span class="cpp1-string">&quot;smiles.png&quot;</span><span class="cpp1-symbol">);
+	
+	</span><span class="cpp1-comment">//===========================================================
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> num=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+	</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> pos=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+	
+	</span><span class="cpp1-comment">//button first(400,100,380,98,&quot;invisible&quot;);
+</span><span class="cpp1-space">	
+	button b_start_game(menu_align_x,</span><span class="cpp1-number">200</span><span class="cpp1-symbol">,menu_lenght_x,</span><span class="cpp1-number">49</span><span class="cpp1-symbol">,</span><span class="cpp1-string">&quot;buttonLong_blue.png&quot;</span><span class="cpp1-symbol">);
+	button b_about(menu_align_x,</span><span class="cpp1-number">300</span><span class="cpp1-symbol">,menu_lenght_x,</span><span class="cpp1-number">49</span><span class="cpp1-symbol">,</span><span class="cpp1-string">&quot;buttonLong_blue.png&quot;</span><span class="cpp1-symbol">);
+	button b_quit(menu_align_x,</span><span class="cpp1-number">400</span><span class="cpp1-symbol">,menu_lenght_x,</span><span class="cpp1-number">49</span><span class="cpp1-symbol">,</span><span class="cpp1-string">&quot;buttonLong_blue.png&quot;</span><span class="cpp1-symbol">);
+	button b_to_main_menu(</span><span class="cpp1-number">1</span><span class="cpp1-symbol">,</span><span class="cpp1-number">1</span><span class="cpp1-symbol">,</span><span class="cpp1-number">400</span><span class="cpp1-symbol">,</span><span class="cpp1-number">49</span><span class="cpp1-symbol">,</span><span class="cpp1-string">&quot;buttonLong_blue.png&quot;</span><span class="cpp1-symbol">);
+	button b_game_math(menu_align_x,</span><span class="cpp1-number">100</span><span class="cpp1-symbol">,menu_lenght_x,</span><span class="cpp1-number">49</span><span class="cpp1-symbol">,</span><span class="cpp1-string">&quot;buttonLong_blue.png&quot;</span><span class="cpp1-symbol">);
+
+	SDL_UpdateWindowSurface(win);
+	SDL_Event e;</span><span class="cpp1-reservedword">bool</span><span class="cpp1-space"> run=</span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">;
+	
+	game_scene_state Scene;
+	 
+	Scene=MAIN_MENU;
+	</span><span class="cpp1-comment">//Scene=GAME_WORDGUESSER;
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-comment">//==============|DEBUG|============
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//clock_t start, stop;
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//==============|DEBUG|============
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-reservedword">while</span><span class="cpp1-space"> (run){
+	</span><span class="cpp1-comment">//--------------------
+</span><span class="cpp1-space">	SDL_Delay(</span><span class="cpp1-number">30</span><span class="cpp1-comment">/*60*/</span><span class="cpp1-symbol">);</span><span class="cpp1-comment">//+CPU perfomance
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//16ms = 60 FPS
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//33ms = 30 FPS
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//42ms = 24 FPS
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//--------------------
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-comment">//==============|DEBUG|============
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//start = clock();
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//==============|DEBUG|============
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-reservedword">switch</span><span class="cpp1-symbol">(Scene)
+	{
+	</span><span class="cpp1-comment">//==============|+SCENE_STATE|====================================
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> GAME_WORDGUESSER:
+	</span><span class="cpp1-comment">//==============|+GAME_WORDGUESSER|====================================
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">while</span><span class="cpp1-symbol">(SDL_PollEvent(&amp;e) != NULL) {	
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (e.type == SDL_QUIT) {
+		run = </span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+		}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (e.type == SDL_KEYDOWN) {
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_UP)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(num&lt;=</span><span class="cpp1-number">5</span><span class="cpp1-symbol">){num++;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_DOWN)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(!(num&lt;=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">)){num--;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_RIGHT)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((pos&lt;=strlen(WORD[num].ch)-</span><span class="cpp1-number">1</span><span class="cpp1-symbol">)){pos++;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_LEFT)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((pos&gt;</span><span class="cpp1-number">1</span><span class="cpp1-symbol">)){pos--;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_SPACE)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(EDITWORD.udr==WORD[num].udr)
+									{
+									ready=</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+									
+									DrawDialog(dialogp,</span><span class="cpp1-number">100</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+									DrawDialog(smilep,</span><span class="cpp1-number">400</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+									
+									SDL_UpdateWindowSurface(win);
+									SDL_Delay(</span><span class="cpp1-number">3000</span><span class="cpp1-symbol">);
+									
+									ready = </span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">;
+									}</span><span class="cpp1-reservedword">else</span><span class="cpp1-symbol">{
+									ready=</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+                         			
+									DrawDialog(dialogs,</span><span class="cpp1-number">100</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+                         			DrawDialog(smiles,</span><span class="cpp1-number">400</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+                         			
+									SDL_UpdateWindowSurface(win);
+									SDL_Delay(</span><span class="cpp1-number">3000</span><span class="cpp1-symbol">);
+									
+									ready=</span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">;
+									}
+								}
+	}
+	
+	b_to_main_menu.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((b_to_main_menu.state==PRESSED) &amp;&amp; ready){
+									Scene=MAIN_MENU;
+									SDL_Delay(</span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+	}
+
+	}
+	SDL_FillRect(screen, NULL, SDL_MapRGB(screen -&gt; format, </span><span class="cpp1-number">0</span><span class="cpp1-symbol">, </span><span class="cpp1-number">191</span><span class="cpp1-symbol">, </span><span class="cpp1-number">255</span><span class="cpp1-symbol">));
+	
+	EDITWORD=WORD[num];
+	DrawText(TYPE_WORD, sFont, </span><span class="cpp1-number">1</span><span class="cpp1-symbol">, </span><span class="cpp1-number">200</span><span class="cpp1-symbol">, EDITWORD.ch, </span><span class="cpp1-number">64</span><span class="cpp1-symbol">);
+	DrawUdar(sUdr, </span><span class="cpp1-number">8</span><span class="cpp1-symbol">+(SIZEFONT*pos-</span><span class="cpp1-number">64</span><span class="cpp1-symbol">), </span><span class="cpp1-number">136</span><span class="cpp1-symbol">);
+	EDITWORD.udr=pos;
+	
+	b_to_main_menu.Draw();
+	DrawText(TYPE_WORD,sFont, </span><span class="cpp1-number">10</span><span class="cpp1-symbol">, </span><span class="cpp1-number">12</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Acirc; &Atilde;&Euml;&Agrave;&Acirc;&Iacute;&Icirc;&Aring; &Igrave;&Aring;&Iacute;&THORN;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	
+	SDL_UpdateWindowSurface(win);
+	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	</span><span class="cpp1-comment">//==============|-GAME_WORDGUESSER|====================================
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> MAIN_MENU:
+	</span><span class="cpp1-reservedword">while</span><span class="cpp1-symbol">(SDL_PollEvent(&amp;e) != NULL) {
+	</span><span class="cpp1-comment">//================================================
+</span><span class="cpp1-space">	
+	b_start_game.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(b_start_game.state==PRESSED){
+		Scene=GAME_WORDGUESSER;
+		printf(</span><span class="cpp1-string">&quot;SCENE CHANGED\n&quot;</span><span class="cpp1-symbol">);
+		pos=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	}
+	
+	b_game_math.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(b_game_math.state==PRESSED){
+		Scene=GAME_MATH;
+		printf(</span><span class="cpp1-string">&quot;SCENE CHANGED\n&quot;</span><span class="cpp1-symbol">);
+		pos=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;	
+	}
+	
+	b_about.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(b_about.state==PRESSED){
+		Scene=MAIN_ABOUT;
+		printf(</span><span class="cpp1-string">&quot;SCENE CHANGED\n&quot;</span><span class="cpp1-symbol">);
+		pos=</span><span class="cpp1-number">1</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;	
+	}
+	
+	b_quit.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(b_game_math.state==PRESSED){
+		run=</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;	
+	}
+	
+	}
+	</span><span class="cpp1-comment">//================================================
+</span><span class="cpp1-space">	SDL_FillRect(screen, NULL, SDL_MapRGB(screen -&gt; format, </span><span class="cpp1-number">0</span><span class="cpp1-symbol">, </span><span class="cpp1-number">191</span><span class="cpp1-symbol">, </span><span class="cpp1-number">255</span><span class="cpp1-symbol">));
+	</span><span class="cpp1-comment">//first.Draw();
+</span><span class="cpp1-space">	b_game_math.Draw(); 
+	DrawText(TYPE_WORD, sFont, menu_align_x, </span><span class="cpp1-number">113</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Igrave;&Agrave;&Ograve;&Aring;&Igrave;&Agrave;&Ograve;&Egrave;&Ecirc;&Agrave;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	b_start_game.Draw();
+	DrawText(TYPE_WORD, sFont, menu_align_x, </span><span class="cpp1-number">213</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&ETH;&Oacute;&Ntilde;&Ntilde;&Ecirc;&Egrave;&Eacute; &szlig;&Ccedil;&Ucirc;&Ecirc;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	
+	b_about.Draw();
+	DrawText(TYPE_WORD, sFont, menu_align_x, </span><span class="cpp1-number">313</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Ntilde;&Iuml;&ETH;&Agrave;&Acirc;&Ecirc;&Agrave;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	
+	b_quit.Draw();
+	DrawText(TYPE_WORD, sFont, menu_align_x, </span><span class="cpp1-number">413</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Acirc;&Ucirc;&Otilde;&Icirc;&Auml;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	</span><span class="cpp1-comment">//================================================
+</span><span class="cpp1-space">	SDL_UpdateWindowSurface(win);
+	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	</span><span class="cpp1-comment">//==============|-SCENE_STATE|====================================
+</span><span class="cpp1-space">	
+	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> GAME_MATH:
+	</span><span class="cpp1-reservedword">while</span><span class="cpp1-symbol">(SDL_PollEvent(&amp;e) != NULL) {	
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (e.type == SDL_QUIT) {
+		run = </span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+		}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> (e.type == SDL_KEYDOWN) {
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_UP)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(num&lt;=</span><span class="cpp1-number">2</span><span class="cpp1-symbol">){num++;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_DOWN)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(!(num&lt;=</span><span class="cpp1-number">0</span><span class="cpp1-symbol">)){num--;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_RIGHT)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(pos&lt;</span><span class="cpp1-number">3</span><span class="cpp1-symbol">){pos++;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_LEFT)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((pos&gt;</span><span class="cpp1-number">1</span><span class="cpp1-symbol">)){pos--;}}
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> ((e.key.keysym.sym == SDLK_SPACE)&amp;&amp; ready){</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(EDIT_MATHP.answ==EQUATION[num].answ)
+									{
+									ready=</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+									
+									DrawDialog(dialogp,</span><span class="cpp1-number">100</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+									DrawDialog(smilep,</span><span class="cpp1-number">400</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+									
+									SDL_UpdateWindowSurface(win);
+									SDL_Delay(</span><span class="cpp1-number">3000</span><span class="cpp1-symbol">);
+									
+									ready = </span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">;
+									}</span><span class="cpp1-reservedword">else</span><span class="cpp1-symbol">{
+									ready=</span><span class="cpp1-reservedword">false</span><span class="cpp1-symbol">;
+                         			
+									DrawDialog(dialogs,</span><span class="cpp1-number">100</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+                         			DrawDialog(smiles,</span><span class="cpp1-number">400</span><span class="cpp1-symbol">, </span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+                         			
+									SDL_UpdateWindowSurface(win);
+									SDL_Delay(</span><span class="cpp1-number">3000</span><span class="cpp1-symbol">);
+									
+									ready=</span><span class="cpp1-reservedword">true</span><span class="cpp1-symbol">;
+									}
+								}
+	}
+	
+	b_to_main_menu.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">((b_to_main_menu.state==PRESSED) &amp;&amp; ready){
+									Scene=MAIN_MENU;
+									SDL_Delay(</span><span class="cpp1-number">100</span><span class="cpp1-symbol">);
+	}
+
+	}
+	SDL_FillRect(screen, NULL, SDL_MapRGB(screen -&gt; format, </span><span class="cpp1-number">0</span><span class="cpp1-symbol">, </span><span class="cpp1-number">191</span><span class="cpp1-symbol">, </span><span class="cpp1-number">255</span><span class="cpp1-symbol">));
+	
+	EDIT_MATHP=EQUATION[num];
+	DrawText(TYPE_NUMBERS, sNumFont, </span><span class="cpp1-number">1</span><span class="cpp1-symbol">, </span><span class="cpp1-number">200</span><span class="cpp1-symbol">, EDIT_MATHP.problem, </span><span class="cpp1-number">64</span><span class="cpp1-symbol">);
+	DrawText(TYPE_NUMBERS, sNumFont, </span><span class="cpp1-number">1</span><span class="cpp1-symbol">, </span><span class="cpp1-number">350</span><span class="cpp1-symbol">, EDIT_MATHP.solves, </span><span class="cpp1-number">48</span><span class="cpp1-symbol">);
+	DrawUdar(sCursor, </span><span class="cpp1-number">8</span><span class="cpp1-symbol">+(</span><span class="cpp1-number">200</span><span class="cpp1-symbol">*pos-</span><span class="cpp1-number">192</span><span class="cpp1-symbol">), </span><span class="cpp1-number">408</span><span class="cpp1-symbol">);
+	EDIT_MATHP.answ=pos;
+	
+	b_to_main_menu.Draw();
+	DrawText(TYPE_WORD, sFont, </span><span class="cpp1-number">10</span><span class="cpp1-symbol">, </span><span class="cpp1-number">12</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Acirc; &Atilde;&Euml;&Agrave;&Acirc;&Iacute;&Icirc;&Aring; &Igrave;&Aring;&Iacute;&THORN;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	
+	SDL_UpdateWindowSurface(win);
+	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	
+	</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> MAIN_ABOUT:
+	</span><span class="cpp1-reservedword">while</span><span class="cpp1-symbol">(SDL_PollEvent(&amp;e) != NULL) {
+	</span><span class="cpp1-comment">//================================================
+</span><span class="cpp1-space">	b_to_main_menu.check(&amp;e);
+	</span><span class="cpp1-reservedword">if</span><span class="cpp1-symbol">(b_to_main_menu.state==PRESSED){Scene=MAIN_MENU;printf(</span><span class="cpp1-string">&quot;SCENE CHANGED\n&quot;</span><span class="cpp1-symbol">);</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;}
+	}
+	</span><span class="cpp1-comment">//================================================
+</span><span class="cpp1-space">	SDL_FillRect(screen, NULL, SDL_MapRGB(screen -&gt; format, </span><span class="cpp1-number">0</span><span class="cpp1-symbol">, </span><span class="cpp1-number">191</span><span class="cpp1-symbol">, </span><span class="cpp1-number">255</span><span class="cpp1-symbol">));
+	
+	b_to_main_menu.Draw();
+	DrawText(TYPE_WORD,sFont, </span><span class="cpp1-number">10</span><span class="cpp1-symbol">, </span><span class="cpp1-number">12</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Acirc; &Atilde;&Euml;&Agrave;&Acirc;&Iacute;&Icirc;&Aring; &Igrave;&Aring;&Iacute;&THORN;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">26</span><span class="cpp1-symbol">);
+	
+	DrawText(TYPE_WORD, sFont, </span><span class="cpp1-number">10</span><span class="cpp1-symbol">, </span><span class="cpp1-number">113</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Auml;&Agrave;&Iacute;&Iacute;&Ucirc;&Eacute; &Iuml;&ETH;&Icirc;&Auml;&Oacute;&Ecirc;&Ograve; &ETH;&Agrave;&Ccedil;&ETH;&Agrave;&Aacute;&Icirc;&Ograve;&Agrave;&Iacute; &Auml;&Euml;&szlig; &Egrave;&Iacute;&Auml;&Egrave;&Acirc;&Egrave;&Auml;&Oacute;&Agrave;&Euml;&Uuml;&Iacute;&Icirc;&Atilde;&Icirc;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">16</span><span class="cpp1-symbol">);
+	DrawText(TYPE_WORD, sFont, </span><span class="cpp1-number">10</span><span class="cpp1-symbol">, </span><span class="cpp1-number">128</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&Iuml;&ETH;&Icirc;&Aring;&Ecirc;&Ograve;&Agrave; &Iuml;&Icirc; &Egrave;&Iacute;&Ocirc;&Icirc;&ETH;&Igrave;&Agrave;&Ograve;&Egrave;&Ecirc;&Aring; &Iacute;&Agrave; &Ograve;&Aring;&Igrave;&Oacute;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">16</span><span class="cpp1-symbol">);
+	DrawText(TYPE_WORD, sFont, </span><span class="cpp1-number">10</span><span class="cpp1-symbol">, </span><span class="cpp1-number">143</span><span class="cpp1-symbol">, </span><span class="cpp1-string">&quot;&ETH;&Agrave;&Ccedil;&ETH;&Agrave;&Aacute;&Icirc;&Ograve;&Ecirc;&Agrave; &Egrave;&Atilde;&ETH; &Acirc; &Iuml;&ETH;&Icirc;&Atilde;&ETH;&Agrave;&Igrave;&Igrave;&Egrave;&ETH;&Icirc;&Acirc;&Agrave;&Iacute;&Egrave;&Egrave;&quot;</span><span class="cpp1-symbol">, </span><span class="cpp1-number">16</span><span class="cpp1-symbol">);
+
+	</span><span class="cpp1-comment">//================================================
+</span><span class="cpp1-space">	SDL_UpdateWindowSurface(win);
+	</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	
+	</span><span class="cpp1-reservedword">default</span><span class="cpp1-symbol">:
+		Scene=MAIN_MENU;
+		</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+	
+	}</span><span class="cpp1-comment">//Switch(Scene)
+
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//==============|DEBUG|============
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//stop = clock();
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//printf(&quot;Loop required %.20f seconds\n&quot;, (stop - start)  / CLK_TCK);
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">//==============|DEBUG|============
+</span><span class="cpp1-space">	}</span><span class="cpp1-comment">//While(run)
+</span><span class="cpp1-symbol">}
+</span></span>
+</code></pre>
+</body>
+</html>
